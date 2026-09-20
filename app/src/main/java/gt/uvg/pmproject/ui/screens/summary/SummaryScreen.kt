@@ -38,7 +38,13 @@ import gt.uvg.pmproject.ui.theme.mdPrimary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SummaryScreen(viewModel: SummaryViewModel = viewModel()) {
+fun SummaryScreen(
+    quotationId: String,
+    onClose: () -> Unit = {},
+    viewModel: SummaryViewModel = viewModel(
+        factory = SummaryViewModel.factory(quotationId)
+    )
+) {
     val quotation by viewModel.quotation.collectAsState()
 
     val subtotal = quotation.services.sumOf { it.subTotal }
@@ -50,7 +56,7 @@ fun SummaryScreen(viewModel: SummaryViewModel = viewModel()) {
             CenterAlignedTopAppBar(
                 title = { Text("Resumen de Cotización", color= mdPrimary, fontWeight = FontWeight. SemiBold) },
                 navigationIcon = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = onClose) {
                         Icon(Icons.Default.Close, contentDescription = "Cerrar")
                     }
                 }

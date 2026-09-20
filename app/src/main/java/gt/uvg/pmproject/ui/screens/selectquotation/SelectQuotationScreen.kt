@@ -40,7 +40,13 @@ import gt.uvg.pmproject.ui.theme.mdPrimary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectQuotationScreen(viewModel: SelectQuotationViewModel = viewModel()) {
+fun SelectQuotationScreen(
+    onClose: () -> Unit = {},
+    onNavigateHome: () -> Unit = {},
+    onSelectQuotation: (String) -> Unit = {},
+    onCreateFromScratch: () -> Unit = {},
+    viewModel: SelectQuotationViewModel = viewModel()
+) {
     val quotations by viewModel.quotations.collectAsState()
 
     Scaffold(
@@ -50,14 +56,17 @@ fun SelectQuotationScreen(viewModel: SelectQuotationViewModel = viewModel()) {
                     Text("Nueva Cotización", color = mdPrimary, fontWeight = FontWeight.SemiBold)
                 },
                 navigationIcon = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = onClose) {
                         Icon(Icons.Default.Close, contentDescription = "Cerrar")
                     }
                 }
             )
         },
         bottomBar = {
-            BottomNavBar(selectedTab = "quotations")
+            BottomNavBar(
+                selectedTab = "quotations",
+                onTabSelected = { tab -> if (tab == "home") onNavigateHome() }
+            )
         }
     ) { innerPadding ->
         Column(
@@ -79,7 +88,7 @@ fun SelectQuotationScreen(viewModel: SelectQuotationViewModel = viewModel()) {
 
             ) {
                 quotations.forEachIndexed { index, quotation ->
-                    QuotationOptionItem(quotation)
+                    QuotationOptionItem(quotation, onClick = { onSelectQuotation(quotation.id) })
                     if (index < quotations.lastIndex) {
                         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
                     }
@@ -88,7 +97,7 @@ fun SelectQuotationScreen(viewModel: SelectQuotationViewModel = viewModel()) {
 
             Spacer(Modifier.height(16.dp))
             Button(
-                onClick = {},
+                onClick = onCreateFromScratch,
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
                 shape = RoundedCornerShape(28.dp),
                 modifier = Modifier

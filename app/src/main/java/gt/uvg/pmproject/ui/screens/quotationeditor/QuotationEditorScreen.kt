@@ -52,7 +52,14 @@ private fun quotationFieldColors() = OutlinedTextFieldDefaults.colors(
 )
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun QuotationEditorScreen(viewModel: QuotationEditorViewModel = viewModel()) {
+fun QuotationEditorScreen(
+    quotationId: String,
+    onClose: () -> Unit = {},
+    onSave: () -> Unit = {},
+    viewModel: QuotationEditorViewModel = viewModel(
+        factory = QuotationEditorViewModel.factory(quotationId)
+    )
+) {
     val quotation by viewModel.quotation.collectAsState()
     val total = quotation.services.sumOf { it.subTotal }
 
@@ -63,7 +70,7 @@ fun QuotationEditorScreen(viewModel: QuotationEditorViewModel = viewModel()) {
                     Text("Modificar Cotización", color = mdPrimary, fontWeight = FontWeight.SemiBold)
                 },
                 navigationIcon = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = onClose) {
                         Icon(Icons.Default.Close, contentDescription = "Cerrar")
                     }
                 }
@@ -159,7 +166,7 @@ fun QuotationEditorScreen(viewModel: QuotationEditorViewModel = viewModel()) {
 
                 Spacer(Modifier.height(12.dp))
                 Button(
-                    onClick = {},
+                    onClick = onSave,
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
                     shape = RoundedCornerShape(28.dp),
                     modifier = Modifier

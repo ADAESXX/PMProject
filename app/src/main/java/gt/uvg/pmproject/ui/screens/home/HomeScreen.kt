@@ -50,7 +50,11 @@ import gt.uvg.pmproject.ui.theme.mdPrimary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
+fun HomeScreen(
+    onNavigateToQuotations: () -> Unit = {},
+    onQuotationClick: (String) -> Unit = {},
+    viewModel: HomeViewModel = viewModel()
+) {
     val quotations by viewModel.recentQuotations.collectAsState()
 
     Scaffold(
@@ -73,8 +77,10 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
             )
         },
         bottomBar = {
-
-            BottomNavBar(selectedTab = "home")
+            BottomNavBar(
+                selectedTab = "home",
+                onTabSelected = { tab -> if (tab == "quotations") onNavigateToQuotations() }
+            )
         },
         containerColor = mdBackground
     ) { innerPadding ->
@@ -99,7 +105,7 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
             }
 
             Spacer(Modifier.height(16.dp))
-            NewQuotationButton()
+            NewQuotationButton(onClick = onNavigateToQuotations)
 
             Spacer(Modifier.height(24.dp))
             Row(
@@ -123,7 +129,10 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
                     .weight(1f)
             ) {
                 items(quotations) { quotation ->
-                    QuotationItem(quotation)
+                    QuotationItem(
+                        quotation,
+                        modifier = Modifier.clickable { onQuotationClick(quotation.id) }
+                    )
                 }
             }
         }
