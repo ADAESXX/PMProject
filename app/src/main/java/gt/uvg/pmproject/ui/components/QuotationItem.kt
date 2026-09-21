@@ -22,9 +22,9 @@ import gt.uvg.pmproject.ui.theme.statusSent
 
 
 @Composable
-fun QuotationItem(quotation: Quotation) {
+fun QuotationItem(quotation: Quotation, modifier: Modifier = Modifier) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(12.dp))
             .padding(16.dp),
