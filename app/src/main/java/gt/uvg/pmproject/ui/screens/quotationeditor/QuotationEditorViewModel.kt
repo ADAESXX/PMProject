@@ -8,9 +8,23 @@ import gt.uvg.pmproject.model.Quotation
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
+private fun emptyQuotation(id: String)= Quotation(
+    id = id,
+    client= "",
+    eventType = "",
+    date="",
+    services= emptyList(),
+    status = "Borrador",
+    amount = 0.0
+
+)
 class QuotationEditorViewModel(quotationId: String) : ViewModel() {
     private val _quotation = MutableStateFlow(
-        MockData.quotations.firstOrNull { it.id == quotationId } ?: MockData.quotations.first()
+        if(quotationId == "new"){
+            emptyQuotation(quotationId)
+        }else{
+            MockData.quotations.firstOrNull{ it.id == quotationId} ?: emptyQuotation(quotationId)
+        }
     )
     val quotation: StateFlow<Quotation> = _quotation
 

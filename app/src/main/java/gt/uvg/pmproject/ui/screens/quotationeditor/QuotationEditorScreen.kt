@@ -29,8 +29,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -94,22 +98,49 @@ fun QuotationEditorScreen(
             ) {
                 Text("Datos del Evento", style = MaterialTheme.typography.titleLarge)
 
+                val quotation by viewModel.quotation.collectAsState()
+                val total = quotation.services.sumOf { it.subTotal }
+
+                var client by remember { mutableStateOf(quotation.client) }
+                var eventType by remember { mutableStateOf(quotation.eventType) }
+                var date by remember { mutableStateOf(quotation.date) }
+
+                LaunchedEffect(quotation.id) {
+                    client = quotation.client
+                    eventType = quotation.eventType
+                    date = quotation.date
+                }
+
+                val clientError = client.isBlank()
+                val eventTypeError = eventType.isBlank()
+                val dateError = date.isBlank()
+                val isFormValid = !clientError && !eventTypeError && !dateError
+
                 OutlinedTextField(
-                    value = quotation.client,
-                    onValueChange = { },
+                    value = client,
+                    onValueChange = { client = it },
                     label = { Text("CLIENTE") },
+                    isError = clientError,
+                    supportingText = { if (clientError) Text("El nombre del cliente es obligatorio") },
+                    colors = quotationFieldColors(),
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
-                    value = quotation.eventType,
-                    onValueChange = {},
+                    value = eventType,
+                    onValueChange = { eventType = it },
                     label = { Text("TIPO DE EVENTO") },
+                    isError = eventTypeError,
+                    supportingText = { if (eventTypeError) Text("Indica el tipo de evento") },
+                    colors = quotationFieldColors(),
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
-                    value = quotation.date,
-                    onValueChange = { },
+                    value = date,
+                    onValueChange = { date = it },
                     label = { Text("FECHA") },
+                    isError = dateError,
+                    supportingText = { if (dateError) Text("La fecha es obligatoria") },
+                    colors = quotationFieldColors(),
                     modifier = Modifier.fillMaxWidth()
                 )
 
@@ -167,6 +198,7 @@ fun QuotationEditorScreen(
                 Spacer(Modifier.height(12.dp))
                 Button(
                     onClick = onSave,
+                    enabled = isFormValid,
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
                     shape = RoundedCornerShape(28.dp),
                     modifier = Modifier
