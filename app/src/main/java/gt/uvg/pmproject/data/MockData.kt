@@ -23,6 +23,40 @@ object MockData {
             amount = 4500.0
         ),
         Quotation(
+            id = "4",
+            client = "Carlos Gómez",
+            eventType = "Aniversario",
+            date = "Hace 3 días",
+            services = listOf(
+                Service(
+                    id = "s4",
+                    name = "Música en Vivo",
+                    provider = "Banda Armonía",
+                    quantity = 1,
+                    unitPrice = 1200.0
+                )
+            ),
+            status = "Activa",
+            amount = 1200.0
+        ),
+        Quotation(
+            id = "5",
+            client = "Colegio Interamericano",
+            eventType = "Graduación",
+            date = "Hace 5 días",
+            services = listOf(
+                Service(
+                    id = "s5",
+                    name = "Audio e Iluminación",
+                    provider = "ProSound Events",
+                    quantity = 1,
+                    unitPrice = 3500.0
+                )
+            ),
+            status = "Aprobada",
+            amount = 3500.0
+        ),
+        Quotation(
             id = "2",
             client = "TechCorp Inc.",
             eventType = "Corporativo",
@@ -53,7 +87,7 @@ object MockData {
                     unitPrice = 300.0
                 )
             ),
-            status = "Borrador",
+            status = "Enviada",
             amount = 800.0
         )
     )

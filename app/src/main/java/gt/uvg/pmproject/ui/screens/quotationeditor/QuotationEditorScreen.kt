@@ -46,6 +46,10 @@ import gt.uvg.pmproject.model.Service
 import gt.uvg.pmproject.ui.theme.mdBorder
 import gt.uvg.pmproject.ui.theme.mdLavender
 import gt.uvg.pmproject.ui.theme.mdPrimary
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 private fun quotationFieldColors() = OutlinedTextFieldDefaults.colors(
@@ -66,6 +70,26 @@ fun QuotationEditorScreen(
 ) {
     val quotation by viewModel.quotation.collectAsState()
     val total = quotation.services.sumOf { it.subTotal }
+
+    //  ESTADOS LOCALES PARA LA VALIDACIÓN DEL FORMULARIO
+    var clientInput by rememberSaveable { mutableStateOf("") }
+    var eventTypeInput by rememberSaveable { mutableStateOf("") }
+    var dateInput by rememberSaveable { mutableStateOf("") }
+    var notesInput by rememberSaveable { mutableStateOf("") }
+
+    // Carga los valores iniciales de la cotización seleccionada cuando el composable inicia
+    LaunchedEffect(quotation) {
+        if (clientInput.isEmpty()) clientInput = quotation.client
+        if (eventTypeInput.isEmpty()) eventTypeInput = quotation.eventType
+        if (dateInput.isEmpty()) dateInput = quotation.date
+    }
+
+    // REGULA LA VALIDACIÓN DE AL MENOS 3 CAMPOS EN TIEMPO REAL
+    val isClientValid = clientInput.isNotBlank()
+    val isEventTypeValid = eventTypeInput.isNotBlank()
+    val isDateValid = dateInput.isNotBlank()
+
+    val isFormValid = isClientValid && isEventTypeValid && isDateValid
 
     Scaffold(
         topBar = {
@@ -170,8 +194,8 @@ fun QuotationEditorScreen(
                 ) {
                     Text("Notas Adicionales", style = MaterialTheme.typography.titleLarge)
                     OutlinedTextField(
-                        value = "",
-                        onValueChange = {},
+                        value = notesInput,
+                        onValueChange = { notesInput = it },
                         placeholder = { Text("Incluir montaje un día antes del evento. Confirmar menú vegetariano.") },
                         colors = quotationFieldColors(),
                         shape = RoundedCornerShape(12.dp),
@@ -205,7 +229,10 @@ fun QuotationEditorScreen(
                         .fillMaxWidth()
                         .height(52.dp)
                 ) {
-                    Text("Guardar Nueva Cotización", color = Color.White)
+                    Text(
+                        text = if (isFormValid) "Guardar Nueva Cotización" else "Complete los campos obligatorios (*)",
+                        color = Color.White
+                    )
                 }
             }
         }
