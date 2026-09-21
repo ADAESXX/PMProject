@@ -41,6 +41,7 @@ import gt.uvg.pmproject.ui.components.QuotationItem
 import gt.uvg.pmproject.ui.components.SummaryChip
 import gt.uvg.pmproject.ui.theme.mdBackground
 import gt.uvg.pmproject.ui.theme.mdPrimary
+import gt.uvg.pmproject.data.MockData
 
 /*
 * En este código se uso IA para resolver el problema que se tenía con TopAppBar
