@@ -1,15 +1,17 @@
 package gt.uvg.pmproject.data
 
+import gt.uvg.pmproject.model.EventType
 import gt.uvg.pmproject.model.Quotation
 import gt.uvg.pmproject.model.Service
+import java.time.LocalDate
 
 object MockData {
     val quotations = listOf(
         Quotation(
             id = "1",
             client = "Familia Martínez",
-            eventType = "Boda",
-            date = "Actualizada hoy",
+            eventType = EventType.BODA,
+            date = LocalDate.of(2026,12,12),
             services = listOf(
                 Service(
                     id = "s1",
@@ -25,8 +27,8 @@ object MockData {
         Quotation(
             id = "4",
             client = "Carlos Gómez",
-            eventType = "Aniversario",
-            date = "Hace 3 días",
+            eventType = EventType.ANIVERSARIO,
+            date = LocalDate.of(2026, 8, 7),
             services = listOf(
                 Service(
                     id = "s4",
@@ -42,8 +44,8 @@ object MockData {
         Quotation(
             id = "5",
             client = "Colegio Interamericano",
-            eventType = "Graduación",
-            date = "Hace 5 días",
+            eventType = EventType.GRADUACION,
+            date = LocalDate.of(2026,3,14),
             services = listOf(
                 Service(
                     id = "s5",
@@ -59,8 +61,8 @@ object MockData {
         Quotation(
             id = "2",
             client = "TechCorp Inc.",
-            eventType = "Corporativo",
-            date = "Ayer",
+            eventType = EventType.CORPORATIVO,
+            date = LocalDate.of(2026, 5, 7),
             services = listOf(
                 Service(
                     id = "s2",
@@ -76,8 +78,8 @@ object MockData {
         Quotation(
             id = "3",
             client = "Ana López",
-            eventType = "Cumpleaños",
-            date = "Hace 2 días",
+            eventType = EventType.CUMPLEANOS,
+            date = LocalDate.of(2026,10,11),
             services = listOf(
                 Service(
                     id = "s3",

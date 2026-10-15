@@ -20,13 +20,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import gt.uvg.pmproject.model.Quotation
 import gt.uvg.pmproject.ui.theme.mdPrimary
+import gt.uvg.pmproject.util.formatDate
 
 @Composable
 fun QuotationOptionItem(quotation: Quotation, onClick: () -> Unit = {}) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White)
             .clickable { onClick() }
             .padding(vertical = 14.dp, horizontal = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -37,18 +37,21 @@ fun QuotationOptionItem(quotation: Quotation, onClick: () -> Unit = {}) {
                 quotation.client,
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.SemiBold,
-                color = mdPrimary
+                color = MaterialTheme.colorScheme.primary
             )
             Text(
-                "${quotation.eventType} · ${quotation.date}",
+                listOfNotNull(
+                    quotation.eventType?.label,
+                    quotation.date?.let(::formatDate)
+                ).joinToString(" · "),
                 style = MaterialTheme.typography.labelSmall,
-                color = Color.Gray
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
         Icon(
             Icons.Default.ChevronRight,
             contentDescription = null,
-            tint = Color.Gray
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }

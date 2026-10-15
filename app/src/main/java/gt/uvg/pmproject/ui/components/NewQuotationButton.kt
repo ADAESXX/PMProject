@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 
 @Composable
 fun NewQuotationButton(onClick: () -> Unit = {}) {
@@ -23,11 +24,14 @@ fun NewQuotationButton(onClick: () -> Unit = {}) {
         modifier = Modifier
             .fillMaxWidth()
             .height(52.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.inverseSurface,
+            contentColor = MaterialTheme.colorScheme.inverseOnSurface
+        ),
         shape = RoundedCornerShape(26.dp)
     ) {
-        Icon(Icons.Default.Add, contentDescription = null, tint = Color.White)
+        Icon(Icons.Default.Add, contentDescription = null)
         Spacer(Modifier.width(8.dp))
-        Text("Nueva Cotización", color = Color.White)
+        Text("Nueva Cotización")
     }
 }

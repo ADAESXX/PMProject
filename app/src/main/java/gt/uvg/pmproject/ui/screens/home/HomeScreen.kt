@@ -52,7 +52,8 @@ import gt.uvg.pmproject.data.MockData
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    onNavigateToQuotations: () -> Unit = {},
+    onNewQuotation: () -> Unit = {},
+    onViewAll: () -> Unit = {},
     onQuotationClick: (String) -> Unit = {},
     viewModel: HomeViewModel = viewModel()
 ) {
@@ -61,11 +62,13 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(
-                    text="Eventos Mastes",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                ) },
+                title = {
+                    Text(
+                        text = "Eventos Mastes",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
                 actions = {
                     IconButton(onClick = { }) {
                         Icon(Icons.Default.Notifications, contentDescription = "Notificaciones")
@@ -73,17 +76,10 @@ fun HomeScreen(
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.background,
-                    titleContentColor = mdPrimary
+                    titleContentColor = MaterialTheme.colorScheme.primary
                 )
             )
-        },
-        bottomBar = {
-            BottomNavBar(
-                selectedTab = "home",
-                onTabSelected = { tab -> if (tab == "quotations") onNavigateToQuotations() }
-            )
-        },
-        containerColor = mdBackground
+        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -106,7 +102,7 @@ fun HomeScreen(
             }
 
             Spacer(Modifier.height(16.dp))
-            NewQuotationButton(onClick = onNavigateToQuotations)
+            NewQuotationButton(onClick = onNewQuotation)
 
             Spacer(Modifier.height(24.dp))
             Row(
@@ -117,8 +113,8 @@ fun HomeScreen(
                 Text(
                     "Ver todas",
                     style = MaterialTheme.typography.labelSmall,
-                    color = mdPrimary,
-                    modifier = Modifier.clickable {  }
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.clickable (onClick = onViewAll)
                 )
             }
 

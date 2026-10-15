@@ -19,6 +19,8 @@ import gt.uvg.pmproject.model.Quotation
 import gt.uvg.pmproject.ui.theme.statusApproved
 import gt.uvg.pmproject.ui.theme.statusDraft
 import gt.uvg.pmproject.ui.theme.statusSent
+import gt.uvg.pmproject.util.formatCurrency
+import gt.uvg.pmproject.util.formatDate
 
 
 @Composable
@@ -33,14 +35,17 @@ fun QuotationItem(quotation: Quotation, modifier: Modifier = Modifier) {
         Column {
             Text(quotation.client, style = MaterialTheme.typography.bodyMedium)
             Text(
-                "${quotation.eventType} · ${quotation.date}",
+                listOfNotNull(
+                    quotation.eventType?.label,
+                    quotation.date?.let(::formatDate)
+                ).joinToString(" · "),
                 style = MaterialTheme.typography.labelSmall,
-                color = Color.Gray
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
         Column(horizontalAlignment = Alignment.End) {
             Text(
-                "$${"%,.0f".format(quotation.amount)}",
+                formatCurrency(quotation.amount),
                 style = MaterialTheme.typography.bodyMedium,
                 color = statusColor(quotation.status)
             )
@@ -64,7 +69,7 @@ fun StatusBadge(status: String) {
 
 @Composable
 fun statusColor(status: String): Color = when (status) {
-    "Aprobada" -> statusApproved
-    "Enviada" -> statusSent
-    else -> statusDraft
+    "Aprobada" -> MaterialTheme.colorScheme.tertiary
+    "Enviada" -> MaterialTheme.colorScheme.onSurfaceVariant
+    else -> MaterialTheme.colorScheme.secondary
 }

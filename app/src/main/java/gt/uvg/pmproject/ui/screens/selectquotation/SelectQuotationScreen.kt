@@ -11,11 +11,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -31,41 +27,33 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.ui.graphics.Color
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.text.font.FontWeight
-import gt.uvg.pmproject.ui.components.BottomNavBar
 import gt.uvg.pmproject.ui.components.QuotationOptionItem
-import gt.uvg.pmproject.ui.theme.mdPrimary
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectQuotationScreen(
-    onClose: () -> Unit = {},
-    onNavigateHome: () -> Unit = {},
+    onBack: () -> Unit = {},
     onSelectQuotation: (String) -> Unit = {},
-    onCreateFromScratch: () -> Unit = {},
     viewModel: SelectQuotationViewModel = viewModel()
 ) {
     val quotations by viewModel.quotations.collectAsState()
 
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text("Nueva Cotización", color = mdPrimary, fontWeight = FontWeight.SemiBold)
-                },
+            TopAppBar(
+                title = { Text("Cotizaciones", fontWeight = FontWeight.SemiBold) },
                 navigationIcon = {
-                    IconButton(onClick = onClose) {
-                        Icon(Icons.Default.Close, contentDescription = "Cerrar")
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
                     }
-                }
-            )
-        },
-        bottomBar = {
-            BottomNavBar(
-                selectedTab = "quotations",
-                onTabSelected = { tab -> if (tab == "home") onNavigateHome() }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                    titleContentColor = MaterialTheme.colorScheme.primary
+                )
             )
         }
     ) { innerPadding ->
@@ -77,15 +65,14 @@ fun SelectQuotationScreen(
             Text(
                 "Editar una cotización existente",
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.Gray
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Spacer(Modifier.height(8.dp))
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.White, RoundedCornerShape(14.dp))
-
+                    .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(14.dp))
             ) {
                 quotations.forEachIndexed { index, quotation ->
                     QuotationOptionItem(quotation, onClick = { onSelectQuotation(quotation.id) })
@@ -93,20 +80,6 @@ fun SelectQuotationScreen(
                         HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
                     }
                 }
-            }
-
-            Spacer(Modifier.height(16.dp))
-            Button(
-                onClick = onCreateFromScratch,
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Black),
-                shape = RoundedCornerShape(28.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp)
-            ) {
-                Icon(Icons.Default.Add, contentDescription = null, tint = Color.White)
-                Spacer(Modifier.width(8.dp))
-                Text("Crear Cotización desde cero", color = Color.White)
             }
         }
     }

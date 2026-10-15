@@ -42,7 +42,10 @@ fun PMProjectNavigation(modifier: Modifier = Modifier) {
         entryProvider = entryProvider {
             entry<PMProjectNavKey.Home> {
                 HomeScreen(
-                    onNavigateToQuotations = { backStack.add(PMProjectNavKey.SelectQuotation) },
+                    onNewQuotation = {
+                        backStack.add(PMProjectNavKey.QuotationEditor(quotationId = "new"))
+                    },
+                    onViewAll = { backStack.add(PMProjectNavKey.SelectQuotation) },
                     onQuotationClick = { quotationId ->
                         backStack.add(PMProjectNavKey.QuotationEditor(quotationId))
                     }
@@ -50,13 +53,9 @@ fun PMProjectNavigation(modifier: Modifier = Modifier) {
             }
             entry<PMProjectNavKey.SelectQuotation> {
                 SelectQuotationScreen(
-                    onClose = { backStack.removeLastOrNull() },
-                    onNavigateHome = { backStack.removeLastOrNull() },
+                    onBack = { backStack.removeLastOrNull() },
                     onSelectQuotation = { quotationId ->
                         backStack.add(PMProjectNavKey.QuotationEditor(quotationId))
-                    },
-                    onCreateFromScratch = {
-                        backStack.add(PMProjectNavKey.QuotationEditor(quotationId = "new"))
                     }
                 )
             }
