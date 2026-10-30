@@ -1,13 +1,16 @@
 package gt.uvg.pmproject.model
 
-import java.time.temporal.TemporalAmount
+import java.time.LocalDate
 
-data class Quotation (
+data class Quotation(
     val id: String,
     val client: String,
-    val eventType: String,
-    val date: String,
+    val eventType: EventType,
+    val date: LocalDate,
     val services: List<Service>,
-    val status: String,
-    val amount: Double
-)
+    val status: QuotationStatus,
+    val notes: String,
+    val updatedAt: Long
+) {
+    val amount: Double get() = services.sumOf { it.subTotal }
+}
