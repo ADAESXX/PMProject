@@ -88,8 +88,11 @@ class FirestoreQuotationRepository(
             collection.document(quotation.id)
         }
         val task = document.set(quotation.toMap())
-        val completed = withTimeoutOrNull(WRITE_TIMEOUT_MS) { task.await() }
-        return SaveOutcome(quotationId = document.id, isPending = completed == null)
+        val completed = withTimeoutOrNull(WRITE_TIMEOUT_MS) {
+            task.await()
+            true
+        } ?: false
+        return SaveOutcome(quotationId = document.id, isPending = !completed)
     }
 
     override suspend fun updateStatus(
@@ -102,8 +105,11 @@ class FirestoreQuotationRepository(
                 FIELD_UPDATED_AT to System.currentTimeMillis()
             )
         )
-        val completed = withTimeoutOrNull(WRITE_TIMEOUT_MS) { task.await() }
-        return SaveOutcome(quotationId = quotationId, isPending = completed == null)
+        val completed = withTimeoutOrNull(WRITE_TIMEOUT_MS) {
+            task.await()
+            true
+        } ?: false
+        return SaveOutcome(quotationId = quotationId, isPending = !completed)
     }
 
     private fun DocumentSnapshot.toQuotation(): Quotation? {
