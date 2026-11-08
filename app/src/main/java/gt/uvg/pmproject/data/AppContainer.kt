@@ -11,6 +11,7 @@ class AppContainer(context: Context) {
         "pmproject.db"
     ).build()
 
-    val quotationRepository: QuotationRepository = FirestoreQuotationRepository()
+    private val authRepository: AuthRepository = FirebaseAuthRepository()
+    val quotationRepository: QuotationRepository = FirestoreQuotationRepository(authRepository)
     val favoriteRepository: FavoriteRepository = RoomFavoriteRepository(database.favoriteDao())
 }
