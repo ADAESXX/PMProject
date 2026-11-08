@@ -14,7 +14,9 @@ data class SaveOutcome(
     val isPending: Boolean
 )
 
-class DataUnavailableException : Exception("Data could not be loaded in time")
+class DataUnavailableException(
+    message: String = "Data could not be loaded in time"
+) : Exception(message)
 
 interface QuotationRepository {
     fun observeQuotations(): Flow<QuotationsSnapshot>
