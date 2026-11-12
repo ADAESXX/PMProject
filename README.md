@@ -1,4 +1,4 @@
-# Eventos Master 📱✨
+# Eventos Master 
 Sistema Móvil de Gestión y Cotización de Eventos
 
 > **Proyecto de Programación Móvil — Universidad del Valle de Guatemala (UVG)**  
