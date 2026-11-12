@@ -9,7 +9,7 @@ Sistema Móvil de Gestión y Cotización de Eventos
 
 ## 1. Problema y Solución
 
-* **Usuario objetivo:** Organizadores de eventos, banqueteros y coordinadores independientes.
+* **Usuario objetivo:** Organizadores de eventos y coordinadores independientes.
 * **Problema validado:** Actualmente realizan cotizaciones en papel o chats dispersos de mensajería, lo que provoca errores humanos en el cálculo de impuestos y subtotales, pérdida de cotizaciones previas y falta de trazabilidad en las solicitudes aprobadas o pendientes.
 * **Propuesta de valor:** *Eventos Master* es una aplicación móvil nativa en Android construida con Jetpack Compose que centraliza la creación, edición, cálculo automático y seguimiento en tiempo real de presupuestos de eventos, ofreciendo soporte offline con persistencia local y sincronización segura en la nube.
 
