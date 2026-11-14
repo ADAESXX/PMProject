@@ -17,8 +17,7 @@ Sistema Móvil de Gestión y Cotización de Eventos
 
 ## 2. Cómo Ejecutar el Proyecto
 
-### Requisitos de Entorno y Compatibilidad
-* **Android Studio:** Android Studio Meerkat (2024.3+) o versión 2025/2026 (requerido para compatibilidad con Android Gradle Plugin 9.2+ y Gradle 9.4+).
+* **Android Studio:** Android Studio 2026.1+ (o compilar directamente vía terminal mediante `./gradlew assembleDebug` con el toolchain automático de Java 21).
 * **JDK:** **Java 21 (Obligatorio).** El proyecto incluye el archivo `gradle/gradle-daemon-jvm.properties` con toolchain configurado en versión 21; Gradle descargará y aprovisionará automáticamente el JDK 21 adecuado para la compilación.
 * **SDK Android:**
   * `compileSdk = 37` (Minor API Level 1 / Android 16 Preview)
@@ -160,7 +159,7 @@ flowchart TB
 | **M11** | Room: Entity, DAO y Database funcional persistente. | Base de datos local [`AppDatabase.kt`](app/src/main/java/gt/uvg/pmproject/data/local/AppDatabase.kt), [`FavoriteDao.kt`](app/src/main/java/gt/uvg/pmproject/data/local/FavoriteDao.kt) y [`FavoriteEntity.kt`](app/src/main/java/gt/uvg/pmproject/data/local/FavoriteEntity.kt). |
 | **M12** | Convenciones del curso y Kotlin idiomático. | Estructura modularizada en paquetes `data`, `model` y `ui`, nomenclaturas en CamelCase y PascalCase, inmutabilidad y limpieza de código. |
 | **M13** | Crashlytics integrado para errores no fatales en Repository. | Errores capturados reportados con `crashlytics.recordException(exception)` en [`FirestoreQuotationRepository.kt`](app/src/main/java/gt/uvg/pmproject/data/FirestoreQuotationRepository.kt#L165-L168) y [`RoomFavoriteRepository.kt`](app/src/main/java/gt/uvg/pmproject/data/RoomFavoriteRepository.kt#L75-L78). |
-| **M14** ★ | Build en Firebase App Distribution con notas de versión e instalado por testers. | Publicado con `versionCode = 2` y `versionName = "1.1"` ([`app/build.gradle.kts`](app/build.gradle.kts#L22-L23)) y distribuido a testers externos. |
+| **M14** ★ | Build en Firebase App Distribution con notas de versión e instalado por testers. | Publicado con `versionCode = 3` y `versionName = "1.2"` ([`app/build.gradle.kts`](app/build.gradle.kts#L22-L23)) y distribuido a testers externos. |
 | **M15** ★ | Flujo principal sin bugs críticos ni pérdida de datos. | Validación exhaustiva del flujo completo: crear, listar, editar, marcar favoritos en Room y persistencia Firestore en modo online/offline. |
 
 ---
