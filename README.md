@@ -187,12 +187,14 @@ flowchart TB
 * Documentación oficial de Firebase: [Firebase Firestore para Android](https://firebase.google.com/docs/firestore), [Firebase Crashlytics SDK](https://firebase.google.com/docs/crashlytics/get-started?platform=android), [Firebase App Distribution](https://firebase.google.com/docs/app-distribution).
 
 ### Declaración de Uso de IA
-* **Herramientas utilizadas:** Antigravity (Google DeepMind) y Gemini 3.8.
+* **Herramientas utilizadas:** Claude (Anthropic), Antigravity (Google DeepMind) y Gemini 3.8.
 * **Para qué se utilizó:**
   1. Identificación y depuración de errores de configuración en Gradle y KSP al migrar dependencias a Kotlin 2.4.
   2. Asistencia en el diseño de expresiones regulares estrictas y modularización de funciones puras en `QuotationFormValidation.kt`.
   3. Formulación y estructuración de diagramas de arquitectura en sintaxis Mermaid para el README técnico.
+  4. Auditoría y verificación exhaustiva de los criterios de la rúbrica de la Entrega Final (mínimos técnicos M1 a M15) y coherencia de arquitectura para asegurar el cumplimiento de la métrica.
 * **Cómo se verificó el resultado:**
+  * Cotejo manual punto por punto contra la rúbrica oficial de Canvas y comprobación de enlaces directos a las funciones de cumplimiento.
   * Compilación limpia mediante `./gradlew assembleDebug`.
   * Ejecución automatizada de pruebas unitarias locales con `./gradlew testDebugUnitTest`.
   * Pruebas manuales en dispositivos físicos reales desconectando Wi-Fi/Datos móviles para validar resiliencia offline y monitoreo de excepciones en la consola de Firebase Crashlytics.
