@@ -1,0 +1,33 @@
+rules_version = '2';
+
+// Reglas de Firestore para Eventos Master.
+// Requieren sesión de Firebase Auth (inicio de sesión anónimo, ver FirebaseAuthRepository).
+// Publicar: consola de Firebase > Firestore Database > Reglas, o `firebase deploy --only firestore:rules`.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /quotations/{quotationId} {
+      allow read: if request.auth != null;
+
+      // Crear y actualizar (la app también actualiza solo status y updatedAt).
+      allow create, update: if request.auth != null && isValidQuotation(request.resource.data);
+
+      // La app no elimina cotizaciones.
+      allow delete: if false;
+    }
+
+    // Cualquier otra colección queda cerrada.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidQuotation(data) {
+      return data.client is string
+        && data.client.size() > 0
+        && data.client.size() <= 120
+        && data.status in ['DRAFT', 'SENT', 'APPROVED']
+        && data.updatedAt is number
+        && data.services is list;
+    }
+  }
+}

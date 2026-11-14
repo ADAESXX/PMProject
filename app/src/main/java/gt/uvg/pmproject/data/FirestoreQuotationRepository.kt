@@ -1,5 +1,6 @@
 package gt.uvg.pmproject.data
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
@@ -41,16 +42,20 @@ private val legacyDateFormatter: DateTimeFormatter =
     DateTimeFormatter.ofPattern("dd/MM/uuuu").withResolverStyle(ResolverStyle.STRICT)
 
 class FirestoreQuotationRepository(
-    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
+    private val authRepository: AuthRepository,
+    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance(),
+    private val crashlytics: FirebaseCrashlytics = FirebaseCrashlytics.getInstance()
 ) : QuotationRepository {
 
     private val collection get() = firestore.collection(COLLECTION_QUOTATIONS)
 
     override fun observeQuotations(): Flow<QuotationsSnapshot> = callbackFlow {
+        authRepository.ensureSignedIn()
         val registration = collection
             .orderBy(FIELD_UPDATED_AT, Query.Direction.DESCENDING)
             .addSnapshotListener(MetadataChanges.INCLUDE) { snapshot, error ->
                 if (error != null) {
+                    reportError(error, "observeQuotations: falló el listener de $COLLECTION_QUOTATIONS")
                     close(error)
                     return@addSnapshotListener
                 }
@@ -67,43 +72,99 @@ class FirestoreQuotationRepository(
     }
 
     override suspend fun getQuotation(quotationId: String): Quotation? {
+        authRepository.ensureSignedIn()
         val reference = collection.document(quotationId)
-        val document = withTimeoutOrNull(READ_TIMEOUT_MS) { reference.getOrNull(Source.DEFAULT) }
-            ?: reference.getOrNull(Source.CACHE)
-            ?: throw DataUnavailableException()
-        return document.toQuotation()
+        val remote = withTimeoutOrNull(READ_TIMEOUT_MS) {
+            reference.getOrNull(Source.DEFAULT)
+        }
+
+        if (remote != null) return remote.toQuotation()
+
+        reportError(
+            DataUnavailableException(
+                "Lectura de $quotationId sin respuesta a tiempo; se usa la caché"
+            ),
+            "getQuotation: sin respuesta del servidor, se intenta la caché"
+        )
+        val cached = reference.getOrNull(Source.CACHE)
+        if (cached == null) {
+            val unavailable = DataUnavailableException()
+            reportError(unavailable, "getQuotation: $quotationId no está en la caché")
+            throw unavailable
+        }
+        return cached.toQuotation()
     }
 
     private suspend fun DocumentReference.getOrNull(source: Source): DocumentSnapshot? =
         try {
             get(source).await()
         } catch (exception: FirebaseFirestoreException) {
+            reportError(exception, "getOrNull: falló get($source) en $path")
             null
         }
 
     override suspend fun saveQuotation(quotation: Quotation): SaveOutcome {
+        authRepository.ensureSignedIn()
         val document = if (quotation.id.isBlank()) {
             collection.document()
         } else {
             collection.document(quotation.id)
         }
         val task = document.set(quotation.toMap())
-        val completed = withTimeoutOrNull(WRITE_TIMEOUT_MS) { task.await() }
-        return SaveOutcome(quotationId = document.id, isPending = completed == null)
+        val completed = awaitWriteOrPending("saveQuotation: falló la escritura de ${document.id}") {
+            task.await()
+        }
+        return SaveOutcome(quotationId = document.id, isPending = !completed)
     }
 
     override suspend fun updateStatus(
         quotationId: String,
         status: QuotationStatus
     ): SaveOutcome {
+        authRepository.ensureSignedIn()
         val task = collection.document(quotationId).update(
             mapOf(
                 FIELD_STATUS to status.name,
                 FIELD_UPDATED_AT to System.currentTimeMillis()
             )
         )
-        val completed = withTimeoutOrNull(WRITE_TIMEOUT_MS) { task.await() }
-        return SaveOutcome(quotationId = quotationId, isPending = completed == null)
+        val completed = awaitWriteOrPending("updateStatus: falló la actualización de $quotationId") {
+            task.await()
+        }
+        return SaveOutcome(quotationId = quotationId, isPending = !completed)
+    }
+
+    /**
+     * Espera una escritura de Firestore hasta [WRITE_TIMEOUT_MS].
+     * Devuelve false si sigue pendiente (por ejemplo, sin conexión: se sincroniza después).
+     * Si Firestore la rechaza, registra el error como no fatal y lo vuelve a lanzar
+     * para que el ViewModel muestre el mensaje correspondiente.
+     */
+    private suspend fun awaitWriteOrPending(
+        errorContext: String,
+        write: suspend () -> Unit
+    ): Boolean =
+        try {
+            val completed = withTimeoutOrNull(WRITE_TIMEOUT_MS) {
+                write()
+                true
+            } ?: false
+            if (!completed) {
+                reportError(
+                    DataUnavailableException("Escritura pendiente de sincronizar (sin conexión)"),
+                    "$errorContext: sin respuesta del servidor, queda pendiente"
+                )
+            }
+            completed
+        } catch (exception: FirebaseFirestoreException) {
+            reportError(exception, errorContext)
+            throw exception
+        }
+
+    /** Registra [exception] en Crashlytics como error no fatal, con un mensaje de contexto. */
+    private fun reportError(exception: Throwable, context: String) {
+        crashlytics.log(context)
+        crashlytics.recordException(exception)
     }
 
     private fun DocumentSnapshot.toQuotation(): Quotation? {
