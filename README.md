@@ -17,14 +17,14 @@ Sistema Móvil de Gestión y Cotización de Eventos
 
 ## 2. Cómo Ejecutar el Proyecto
 
-### Requisitos Previos
-* **Android Studio:** Ladybug (2024.2.1) o superior.
-* **JDK:** Java 17 o Java 21 (configurado en *Gradle JDK*).
+### Requisitos de Entorno y Compatibilidad
+* **Android Studio:** Android Studio Meerkat (2024.3+) o versión 2025/2026 (requerido para compatibilidad con Android Gradle Plugin 9.2+ y Gradle 9.4+).
+* **JDK:** **Java 21 (Obligatorio).** El proyecto incluye el archivo `gradle/gradle-daemon-jvm.properties` con toolchain configurado en versión 21; Gradle descargará y aprovisionará automáticamente el JDK 21 adecuado para la compilación.
 * **SDK Android:**
-  * `minSdk = 34` (Android 14)
+  * `compileSdk = 37` (Minor API Level 1 / Android 16 Preview)
   * `targetSdk = 36`
-  * `compileSdk = 37`
-* **Conectividad:** Dispositivo físico o emulador con Google Play Services activados.
+  * `minSdk = 34` (Android 14)
+* **Conectividad:** Dispositivo físico o emulador con Android 14 (API 34)+ y Google Play Services activados.
 
 ### Pasos de Instalación y Ejecución
 1. Clonar el repositorio:
@@ -36,15 +36,17 @@ Sistema Móvil de Gestión y Cotización de Eventos
    ```bash
    git checkout feature/-entregafinal
    ```
-3. **Configuración de Firebase:** El archivo `app/google-services.json` ya se encuentra incluido en el repositorio en la carpeta `app/`, por lo que el proyecto compila y se conecta a Firebase sin requerir pasos manuales adicionales.
-4. Compilar y ejecutar pruebas unitarias:
+3. **Configuración de Firebase:** El archivo `app/google-services.json` ya se encuentra incluido en el repositorio dentro del directorio `app/`, configurado con el proyecto activo de Firebase (`eventos-master-pm`), por lo que compila y se conecta sin pasos manuales adicionales.
+4. **Compilación y ejecución directa por terminal:**  
+   *(Se recomienda compilar por línea de comandos mediante el Gradle Wrapper para garantizar la ejecución limpia independientemente de la versión gráfica del IDE):*
    ```bash
+   # 1. Ejecutar pruebas unitarias locales
    ./gradlew testDebugUnitTest
-   ```
-5. Generar APK de depuración o instalar en dispositivo conectado:
-   ```bash
+
+   # 2. Compilar el APK de depuración
    ./gradlew assembleDebug
-   # O para instalar directamente en el dispositivo:
+
+   # 3. Instalar directamente en el emulador o dispositivo conectado
    ./gradlew installDebug
    ```
 
